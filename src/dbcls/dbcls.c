@@ -75,7 +75,6 @@ static char *decode_signal_val_type(signal_val_type_t signal_val_type)
 
 static void show_attribute(attribute_t *a)
 {
-
   if(a->name) {
     printf("  %s = ",a->name);
   } else {
@@ -234,10 +233,34 @@ static void show_signal(signal_list_t *sl)
   putchar('\n');
 }
 
+string_t tripnl(string_t string)
+{
+    int i;
+    char *tmps = string;
+    for(i = 0; i < strlen(string); i++) 
+    //for(i = 0; tmps && (tmps[i] != '\0'); i++) 
+    {
+        if (tmps[i] == '\n' || tmps[i] == '\r')
+        {
+            tmps[i] = ' ';
+        }
+        else if (tmps[i] == ';')
+        {
+            tmps[i] = '.';
+        }
+        else
+        {
+            //
+        }
+    }
+    return (string_t)tmps;
+}
+
 static void show_string(string_t string)
 {
   if(string) {
-    printf("\"%s\"", string);
+    //printf("\"%s\"", string);
+    printf("\"%s\"", tripnl(string));
   }
 }
 
