@@ -73,6 +73,37 @@ static char *decode_signal_val_type(signal_val_type_t signal_val_type)
   return text;
 }
 
+static string_t tripnl(string_t string)
+{
+    int i;
+    char *tmps = string;
+    for(i = 0; i < strlen(string); i++) 
+    //for(i = 0; tmps && (tmps[i] != '\0'); i++) 
+    {
+        if (tmps[i] == '\n' || tmps[i] == '\r')
+        {
+            tmps[i] = ' ';
+        }
+        else if (tmps[i] == ';')
+        {
+            tmps[i] = '.';
+        }
+        else
+        {
+            //
+        }
+    }
+    return (string_t)tmps;
+}
+
+static void show_string(string_t string)
+{
+  if(string) {
+    //printf("\"%s\"", string);
+    printf("\"%s\"", tripnl(string));
+  }
+}
+
 static void show_attribute(attribute_t *a)
 {
   if(a->name) {
@@ -156,7 +187,7 @@ static void show_network(dbc_t *dbc)
 
   if(dbc->network) {
     if(dbc->network->comment) {
-      printf("comment: \"%s\"\n",dbc->network->comment);
+      printf("comment: \"%s\"\n",tripnl(dbc->network->comment));
     }
     show_attribute_list(dbc->network->attribute_list);
   }
@@ -226,42 +257,20 @@ static void show_signal(signal_list_t *sl)
 	 sl->signal->unit?sl->signal->unit:"");
   show_string_list(sl->signal->receiver_list);
   putchar(';');
-  printf("\"%s\";",sl->signal->comment?sl->signal->comment:"");
+  //printf("\"%s\";",sl->signal->comment?sl->signal->comment:"");
+  if(sl->signal->comment)
+  {
+      show_string(sl->signal->comment);
+      putchar(';');
+  }
+  else
+  {
+      putchar(';');
+  }
   show_attribute_list(sl->signal->attribute_list);
   putchar(';');
   show_val_map(sl->signal->val_map);
   putchar('\n');
-}
-
-string_t tripnl(string_t string)
-{
-    int i;
-    char *tmps = string;
-    for(i = 0; i < strlen(string); i++) 
-    //for(i = 0; tmps && (tmps[i] != '\0'); i++) 
-    {
-        if (tmps[i] == '\n' || tmps[i] == '\r')
-        {
-            tmps[i] = ' ';
-        }
-        else if (tmps[i] == ';')
-        {
-            tmps[i] = '.';
-        }
-        else
-        {
-            //
-        }
-    }
-    return (string_t)tmps;
-}
-
-static void show_string(string_t string)
-{
-  if(string) {
-    //printf("\"%s\"", string);
-    printf("\"%s\"", tripnl(string));
-  }
 }
 
 static void show_message_old(message_t *message)
@@ -298,6 +307,8 @@ static void show_message(message_list_t *ml)
 
 static void show_message_list(message_list_t *message_list)
 {
+  show_message_header();
+  putchar('\n');
   while(message_list != NULL) {
     show_message(message_list);
     putchar('\n');
@@ -319,7 +330,7 @@ static void show_signals(dbc_t *dbc)
       show_message(ml);
       putchar(';');
       show_signal(sl);
-      putchar('\n');
+      //putchar('\n');
     }
   }
 }
@@ -328,12 +339,13 @@ static void show_nodes(dbc_t *dbc)
   node_list_t *nl;
 
   for(nl = dbc->node_list; nl != NULL; nl = nl->next) {
-    printf("%s", nl->node->name);
+    printf("%s;", nl->node->name);
     if(nl->node->comment) {
-      printf(";\"%s\"", nl->node->comment);
+      //printf(";\"%s\"", nl->node->comment);
+      show_string(nl->node->comment);
     }
-    putchar('\n');
     show_attribute_list(nl->node->attribute_list);
+    putchar('\n');
   }
 }
 
