@@ -6,6 +6,7 @@
 #endif
 
 #include <stdio.h>
+#include <time.h>
 
 #include "../hashtable/hashtable.h"
 #include "busAssignment.h"
